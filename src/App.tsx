@@ -1,122 +1,88 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+interface Arte {
+  id: number;
+  name: string;
+  status: string;
+  species: string;
+  image: string;
 }
 
-export default App
+interface RespuestaAPI {
+  results: Arte[];
+}
+
+
+function App() {
+
+  // declaracion e inicializacion de los estados que se van a usar en la aplicacion
+  const [artes, setArtes] = useState<Arte[]>([]);
+  const [texto, setTexto] = useState<string>("");
+  const [busqueda, setBusqueda] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [intentos, setIntentos] = useState(0);
+  const [marcados, setMarcados] = useState<number[]>(() => {
+    const guardado = localStorage.getItem("marcados");
+    return guardado ? (JSON.parse(guardado) as number[]) : [];
+  });
+  // se hace un efecto secundario para actualizar el estado de busqueda con un retraso de 400ms después de que el usuario deje de escribir
+  useEffect(() => {
+    const id = setTimeout(() => {
+      setBusqueda(texto);
+    }, 400);
+
+    return () => {
+      clearTimeout(id);
+    };
+  }, [texto]);
+  // se hace un efecto secundario para cargar los datos de la API cuando se actualiza el estado de busqueda o intentos
+  useEffect(() => {
+    async function cargar() {
+      setError(null);
+      try {
+        const res = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(busqueda)}`);
+        if (!res.ok) throw new Error(`Error ${res.status}`);
+        const json: RespuestaAPI = await res.json();
+        setArtes(json.results);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Error desconocido");
+      }
+    }
+    cargar();
+  }, [busqueda, intentos]);
+
+
+  return <div>
+    <h1>Obras de arte</h1>
+
+    <input
+      value={texto}
+      onChange={(e) => setTexto(e.target.value)}
+      placeholder="Buscar obra..."
+    />
+    {error && (
+      <div>
+        <p>Ha ocurrido un error: {error}</p>
+        <button onClick={() => setIntentos((n) => n + 1)}>
+          Reintentar
+        </button>
+      </div>
+    )}
+   {artes.map((arte) => (
+  <div key={arte.id}>
+    <img
+      src={arte.image}
+      alt={arte.name}
+      onError={(e) => {
+        e.currentTarget.style.display = "none";
+      }}
+    />
+    <h3>{arte.name}</h3>
+    <p>Status: {arte.status}</p>
+    <p>Especie: {arte.species}</p>
+  </div>
+))}
+  </div>;
+}
+
+export default App;
