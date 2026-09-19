@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import ListaElementos from "./components/ListaElementos";
 
-interface Arte {
+
+interface Personajes {
   id: number;
   name: string;
   status: string;
@@ -9,14 +11,14 @@ interface Arte {
 }
 
 interface RespuestaAPI {
-  results: Arte[];
+  results: Personajes[];
 }
 
 
 function App() {
 
   // declaracion e inicializacion de los estados que se van a usar en la aplicacion
-  const [artes, setArtes] = useState<Arte[]>([]);
+  const [personajes, setPersonajes] = useState<Personajes[]>([]);
   const [texto, setTexto] = useState<string>("");
   const [busqueda, setBusqueda] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +45,7 @@ function App() {
         const res = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(busqueda)}`);
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const json: RespuestaAPI = await res.json();
-        setArtes(json.results);
+        setPersonajes(json.results);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error desconocido");
       }
@@ -53,12 +55,12 @@ function App() {
 
 
   return <div>
-    <h1>Obras de arte</h1>
+    <h1>Serie Rick And Morty</h1>
 
     <input
       value={texto}
       onChange={(e) => setTexto(e.target.value)}
-      placeholder="Buscar obra..."
+      placeholder="Buscar personaje..."
     />
     {error && (
       <div>
@@ -68,20 +70,7 @@ function App() {
         </button>
       </div>
     )}
-   {artes.map((arte) => (
-  <div key={arte.id}>
-    <img
-      src={arte.image}
-      alt={arte.name}
-      onError={(e) => {
-        e.currentTarget.style.display = "none";
-      }}
-    />
-    <h3>{arte.name}</h3>
-    <p>Status: {arte.status}</p>
-    <p>Especie: {arte.species}</p>
-  </div>
-))}
+    <ListaElementos personajes={personajes} />
   </div>;
 }
 
