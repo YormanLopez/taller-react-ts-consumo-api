@@ -41,6 +41,10 @@ function App() {
       setError(null);
       try {
         const res = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(busqueda)}`);
+        if (res.status === 404) {
+          setArtes([]);
+          return;
+        }
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const json: RespuestaAPI = await res.json();
         setArtes(json.results);
@@ -51,14 +55,25 @@ function App() {
     cargar();
   }, [busqueda, intentos]);
 
+  function alternar(id: number) {
+    if (marcados.includes(id)) {
+      setMarcados((prev) => prev.filter((x) => x !== id));
+    } else {
+      setMarcados((prev) => [...prev, id]);
+    }
+  }
+  useEffect(() => {
+    localStorage.setItem("marcados", JSON.stringify(marcados));
+  }, [marcados]);
 
   return <div>
-    <h1>Obras de arte</h1>
+    <h1>La mejor serie del mundo</h1>
+     <p>marcados: {marcados.length}</p>
 
     <input
       value={texto}
       onChange={(e) => setTexto(e.target.value)}
-      placeholder="Buscar obra..."
+      placeholder="Buscar personaje..."
     />
     {error && (
       <div>
@@ -68,20 +83,21 @@ function App() {
         </button>
       </div>
     )}
-   {artes.map((arte) => (
-  <div key={arte.id}>
-    <img
-      src={arte.image}
-      alt={arte.name}
-      onError={(e) => {
-        e.currentTarget.style.display = "none";
-      }}
-    />
-    <h3>{arte.name}</h3>
-    <p>Status: {arte.status}</p>
-    <p>Especie: {arte.species}</p>
-  </div>
-))}
+    {artes.map((arte) => (
+      <div key={arte.id}>
+        <img
+          src={arte.image}
+          alt={arte.name}
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
+          <input type="checkbox" checked={marcados.includes(arte.id)} onChange={() => alternar(arte.id)} />
+          <h3>{arte.name}</h3>
+        <p>Status: {arte.status}</p>
+        <p>Especie: {arte.species}</p>
+      </div>
+    ))}
   </div>;
 }
 
