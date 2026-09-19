@@ -6,6 +6,7 @@ interface Obra {
     titulo: string;
     artista: string;
     fecha: string;
+    imagen: string | null;
 }
 
 interface Props {
@@ -20,11 +21,13 @@ function ListaElementos({ obras }: Props) {
                     key={obra.id}
                     titulo={obra.titulo}
                     artista={obra.artista}
-                    fecha={obra.fecha}
-                />
+                    fecha={obra.fecha} 
+                    imagen={obra.imagen}                />
             ))}
         </div>
     );
 }
+
+
 
 export default ListaElementos;
