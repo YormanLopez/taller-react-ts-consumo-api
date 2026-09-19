@@ -1,5 +1,5 @@
-import TarjetaElemento from "./tarjetaElemento";
-import estilos from "./listaElementos.module.css";
+import TarjetaElemento from "./TarjetaElemento";
+import estilos from "./ListaElementos.module.css";
 
 interface Personaje {
     id: number;
@@ -22,7 +22,7 @@ function ListaElementos({ personajes }: Props) {
                     nombre={personaje.name}
                     especie={personaje.species}
                     estado={personaje.status}
-                    imagen={personaje.image}                />
+                    imagen={personaje.image}/>
             ))}
         </div>
     );

@@ -1,4 +1,4 @@
-import estilos from './tarjetaElemento.module.css'
+import estilos from './TarjetaElemento.module.css'
 
 interface Props {
   nombre: string

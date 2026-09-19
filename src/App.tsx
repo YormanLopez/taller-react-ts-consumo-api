@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-
+import ListaElementos from "./components/ListaElementos";
 
 
 interface Personajes {
@@ -71,20 +70,7 @@ function App() {
         </button>
       </div>
     )}
-   {personajes.map((personaje) => (
-  <div key={personaje.id}>
-    <img
-      src={personaje.image}
-      alt={personaje.name}
-      onError={(e) => {
-        e.currentTarget.style.display = "none";
-      }}
-    />
-    <h3>{personaje.name}</h3>
-    <p>Status: {personaje.status}</p>
-    <p>Especie: {personaje.species}</p>
-  </div>
-))}
+    <ListaElementos personajes={personajes} />
   </div>;
 }
 
