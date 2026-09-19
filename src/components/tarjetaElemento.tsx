@@ -4,7 +4,7 @@ interface Props {
   nombre: string
   especie: string
   estado: string
-  imagen: string | null;
+  imagen: string
 }
 
 function TarjetaElemento({ nombre, especie, estado, imagen }: Props) {
