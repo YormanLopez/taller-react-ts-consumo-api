@@ -1,28 +1,28 @@
 import TarjetaElemento from "./tarjetaElemento";
 import estilos from "./listaElementos.module.css";
 
-interface Obra {
+interface Personaje {
     id: number;
-    titulo: string;
-    artista: string;
-    fecha: string;
-    imagen: string | null;
+    name: string;
+    status: string;
+    species: string;
+    image: string;
 }
 
 interface Props {
-    obras: Obra[];
+    personajes: Personaje[];
 }
 
-function ListaElementos({ obras }: Props) {
+function ListaElementos({ personajes }: Props) {
     return (
         <div className={estilos.lista}>
-            {obras.map((obra) => (
+            {personajes.map((personaje) => (
                 <TarjetaElemento 
-                    key={obra.id}
-                    titulo={obra.titulo}
-                    artista={obra.artista}
-                    fecha={obra.fecha} 
-                    imagen={obra.imagen}                />
+                    key={personaje.id}
+                    nombre={personaje.name}
+                    especie={personaje.species}
+                    estado={personaje.status}
+                    imagen={personaje.image}                />
             ))}
         </div>
     );

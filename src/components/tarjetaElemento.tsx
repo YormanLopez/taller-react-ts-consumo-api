@@ -1,19 +1,19 @@
 import estilos from './tarjetaElemento.module.css'
 
 interface Props {
-  titulo: string
-  artista: string
-  fecha: string
+  nombre: string
+  especie: string
+  estado: string
   imagen: string | null;
 }
 
-function TarjetaElemento({ titulo, artista, fecha, imagen }: Props) {
+function TarjetaElemento({ nombre, especie, estado, imagen }: Props) {
   return (
     <div className={estilos.tarjeta}>
-      <img className={estilos.imagen} src={imagen || 'https://via.placeholder.com/150'} alt={titulo} />
-      <h3>{titulo}</h3>
-      <p>Artista: {artista}</p>
-      <p>Fecha: {fecha}</p>
+      <img className={estilos.imagen} src={imagen || 'https://via.placeholder.com/150'} alt={nombre} />
+      <h3>{nombre}</h3>
+      <p>Especie: {especie}</p>
+      <p>Estado: {estado}</p>
     </div>
   );
 }
