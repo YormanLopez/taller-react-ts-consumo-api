@@ -1,14 +1,15 @@
 import { useState, useEffect } from "react";
 
-// se crea una interface para ayudar a tipar los datos que se van a recibir de la API de obras de arte
 interface Arte {
   id: number;
-  title: string;
-  artist_display: string | null; // El artista puede ser nulo si no se conoce
-  image_id: string | null; // La imagen puede ser nula si no se tiene una
+  name: string;
+  status: string;
+  species: string;
+  image: string;
 }
+
 interface RespuestaAPI {
-  data: Arte[];
+  results: Arte[];
 }
 
 
@@ -39,10 +40,10 @@ function App() {
     async function cargar() {
       setError(null);
       try {
-        const res = await fetch(`https://api.artic.edu/api/v1/artworks/search?q=${encodeURIComponent(busqueda)}&limit=12&fields=id,title,artist_display,image_id`);
+        const res = await fetch(`https://rickandmortyapi.com/api/character/?name=${encodeURIComponent(busqueda)}`);
         if (!res.ok) throw new Error(`Error ${res.status}`);
         const json: RespuestaAPI = await res.json();
-        setArtes(json.data);
+        setArtes(json.results);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Error desconocido");
       }
@@ -67,18 +68,20 @@ function App() {
         </button>
       </div>
     )}
-    {artes.map((arte) => (
-      <div key={arte.id}>
-        {arte.image_id && (
-          <img
-            src={`https://www.artic.edu/iiif/2/${arte.image_id}/full/843,/0/default.jpg`}
-            alt={arte.title}
-          />
-        )}
-        <h3>{arte.title}</h3>
-        <p>{arte.artist_display}</p>
-      </div>
-    ))}
+   {artes.map((arte) => (
+  <div key={arte.id}>
+    <img
+      src={arte.image}
+      alt={arte.name}
+      onError={(e) => {
+        e.currentTarget.style.display = "none";
+      }}
+    />
+    <h3>{arte.name}</h3>
+    <p>Status: {arte.status}</p>
+    <p>Especie: {arte.species}</p>
+  </div>
+))}
   </div>;
 }
 
